@@ -333,7 +333,10 @@ size_t
 {
     memory_tracker_t*   tracker         = gMemoryTracker.Next;
     size_t              leakCount       = 0;
+
+#ifdef DEBUG_MODE
     size_t              leakAmount      = 0;
+#endif
 
     while( tracker != &gMemoryTracker )
     {
@@ -345,11 +348,13 @@ size_t
                     tracker->LineNumber,
                     tracker->AllocationSize,
                     tracker->Address );
-
+#ifdef DEBUG_MODE
         leakAmount += tracker->AllocationSize;
+#endif
         tracker = tracker->Next;
     } // while()
 
+#ifdef DEBUG_MODE
     if( leakCount )
     {
         BWSR_DEBUG( LOG_WARNING,
@@ -357,6 +362,7 @@ size_t
                     leakCount,
                     leakAmount );
     }
+#endif
 
     return leakCount;
 }

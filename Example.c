@@ -25,6 +25,14 @@
 
 #include "Memory/MemoryTracker.h"
 
+#ifndef DEBUG_MODE
+    #ifdef BWSR_DEBUG
+        #undef BWSR_DEBUG
+    #endif
+
+    #define BWSR_DEBUG( LEVEL, ARGS... ) fprintf( stderr, ##ARGS );
+#endif
+
 //------------------------------------------------------------------------------
 //  HOOK FUNCTIONS AND HOOK TYPES
 //------------------------------------------------------------------------------
@@ -45,17 +53,18 @@ typedef int32_t
 int hcreat( const char * files, mode_t modes )
 {
     BWSR_DEBUG( LOG_CRITICAL,
-                "SUCCESS! Caught creat()!: %s\n",
+                "SUCCESS! Caught creat()!: '%s'\n",
                 files );
-    __UNUSED( modes )
+    __UNUSED( files, modes )
     return -1;
 }
 
 int hprintf( const char* text, ... )
 {
     BWSR_DEBUG( LOG_CRITICAL,
-                "SUCCESS! Caught printf() with text: %s\n",
+                "SUCCESS! Caught printf() with text: '%s'\n",
                 text );
+    __UNUSED( text )
     return -1;
 }
 
@@ -144,12 +153,19 @@ void
 
     BWSR_InlineHook( printf, hprintf, &oldprintf, NULL, NULL );
 
-    printf( "Testing printf of an integer: %d\n", 1 );
+    printf( "Testing printf of an integer: %d", 1 );
 
     if( NULL != oldprintf )
     {
         BWSR_DEBUG( LOG_CRITICAL, "Calling original printf(). Console should display!\n" );
-        ((__typeof(printf)*)oldprintf)( "Testing the original version of printf with integer: %d!\n", 1 );
+
+        if( EOF == ((__typeof(printf)*)oldprintf)( "Testing the original version of printf with integer: %d!\n", 1 ) )
+        {
+            BWSR_DEBUG( LOG_CRITICAL, "FAILURE: Original printf() did not write any bytes to console!\n" );
+        }
+        else {
+            BWSR_DEBUG( LOG_CRITICAL, "SUCCESS: Original printf() worked!\n" );
+        }
     }
     else {
         BWSR_DEBUG( LOG_CRITICAL, "FAILURE: original printf() could not be called!\n" );
@@ -181,6 +197,10 @@ void
 int main()
 {
 
+#ifndef DEBUG_MODE
+    fprintf( stderr, "Example was made without DEBUG printing. Output will be limited!\n" );
+#endif
+
     EXAMPLE_hooking_creat();
 
     EXAMPLE_hooking_printf();
@@ -200,4 +220,5 @@ int main()
     BWSR_DEBUG( LOG_CRITICAL,
                 "%zu memory leaks found!\n",
                 leaks );
+    __UNUSED(leaks)
 }

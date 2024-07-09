@@ -1,5 +1,39 @@
 # BWSR
-Arm64 inline hooking for IOS and Android
+Inline Hooking Library for Android and iOS
+
+BWSR is a versatile inline hooking library implemented entirely in C, designed to facilitate dynamic code modification and interception on both Android and iOS platforms.
+
+BWSR has been tested on both Android 14.0 and iOS 17.2.
+
+## Building
+For building `iOS` you must be on a Mac machine with `X-Code`.
+For building `Android` you must have the AndroidNDK downloaded and have the `ANDROID_NDK` environmental set to the path of the NDK.
+
+### Build Archive
+To build the archive scratch simply run the default make.
+```
+make
+```
+or in Debug
+```
+make Debug
+```
+or for a specific platform
+```
+make iOS
+make Android
+```
+
+### Make Platform Examples
+To make the Example for Android and iOS run the command
+```
+make Examples
+```
+or for a specific platform
+```
+make AndroidExample
+make iOSExample
+```
 
 ## Symbol Resolver (Locating the Address of a Function)
 Currently only iOS is supported for the symbol resolver. Android support will come when time permits.
@@ -30,7 +64,7 @@ int hook_printf( const char* text, ... ) {
     return -1;
 }
 
-// A simple hoook of printf
+// A simple hook of printf
 BWSR_InlineHook( printf, hook_printf, NULL, NULL, NULL );
 
 // Cleanup the hook
@@ -96,3 +130,8 @@ if( leaks > 0 )
 The list of items that needs to be done is far longer than this list, but these are these are the next important goals:
 1. Make archive for easy use
 2. Add Symbol Resolver support for ELF files.
+
+## ACKNOWLEDGMENTS
+- https://github.com/kubo/plthook/
+- https://github.com/jmpews/Dobby
+- https://github.com/asLody/whale
