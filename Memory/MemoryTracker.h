@@ -17,7 +17,7 @@
 //  DEFINITIONS
 // -----------------------------------------------------------------------------
 
-#if defined( BWSR_DEBUG )
+#if defined( DEBUG_MODE )
 
     // Memory tracked malloc
     #define BwsrMalloc( AllocationSize )                \
