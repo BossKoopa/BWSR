@@ -132,8 +132,7 @@
 #define MACRO_EXPAND__0__
 
 // Should be an impossible case
-#define MACRO_EXPAND__1__( Parameter )                          \
-    CHECK_PARAMETER_BWSR( Parameter )
+#define MACRO_EXPAND__1__( Parameter )
 
 #define MACRO_EXPAND__2__( MACRO_EXPANSION, Parameter )         \
     MACRO_EXPANSION( Parameter )

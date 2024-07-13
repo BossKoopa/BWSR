@@ -1,38 +1,34 @@
 # BWSR
-Inline Hooking Library for Android and iOS
+Inline Hooking Library for Arm64 devices across multiple platforms.
 
-BWSR is a versatile inline hooking library implemented entirely in `C`, designed to facilitate dynamic code modification and interception on both Android and iOS platforms.
+Platform Support:
+- iOS (arm64/arm64e).
+- Android (arm64).
+- Linux (arm64).
+- OSX (arm64/arm64e).
 
-BWSR has been tested on both Android 14.0 and iOS 17.2.
+BWSR is a versatile inline hooking library implemented entirely in `C`, designed to facilitate dynamic code modification and interception on `Linux`, `OSX`, `iOS`, and `Android`.
 
 ## Building
-For building `iOS` you must be on a Mac machine with `X-Code`.
-For building `Android` you must have the AndroidNDK downloaded and have the `ANDROID_NDK` environmental set to the path of the NDK.
+Building `iOS` and `MacOSX` requires a Mac machine with `X-Code` and `Command-Line-Tools` installed.
 
-### Build Archive
-To build the archive scratch simply run the default make.
+Building `Android` requires a recent AndroidNDK downloaded and have the `ANDROID_NDK` environmental set to the path of the NDK.
+
+Building `Linux` requires that `build-essential` and `clang` are installed.
+
+To make the hooking library and all the example programs simply run:
 ```sh
 make
 ```
-or in Debug
+
+To make only the hooking library
 ```sh
-make Debug
-```
-or for a specific platform
-```sh
-make iOS
-make Android
+make hooklibs
 ```
 
-### Make Platform Examples
-To make the Example for Android and iOS run the command
+To make the example program
 ```sh
-make Examples
-```
-or for a specific platform
-```sh
-make AndroidExample
-make iOSExample
+make examples
 ```
 
 ## Symbol Resolver (Locating the Address of a Function)

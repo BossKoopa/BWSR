@@ -19,11 +19,10 @@ int
     BWSR_InlineHook
     (
         void*       Address,
-        void*       fake_func,
-        void**      out_origin_func,
-        // uintptr_t   datShitBrah,
-        void*           BeforePageWriteFn,
-        void*           AfterPageWriteFn
+        void*       HookFunction,
+        void**      OutOriginalFunction,
+        void*       BeforePageWriteFn,
+        void*       AfterPageWriteFn
     );
 
 int
