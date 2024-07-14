@@ -47,6 +47,8 @@
 #include "Memory/MemoryTracker.h"
 #include "Memory/MemoryAllocator.h"
 
+#include "SymbolResolve/Darwin/Macho.h"
+
 // Binary Warfare & System Reconnaissance
 
 // -----------------------------------------------------------------------------
@@ -341,6 +343,13 @@ BWSR_STATUS
     INTERNAL_InterceptorTracker_Initialize
     (
         OUT         interceptor_tracker_t**     Tracker
+    );
+
+static
+void
+    INTERNAL_MemoryAllocator_CheckInterceptorRelease
+    (
+        void
     );
 
 static
@@ -1115,9 +1124,10 @@ BWSR_STATUS
         retVal = ERROR_MEM_ALLOC;
     }
     else {
-        if( ERROR_SUCCESS != ( retVal = INTERNAL_SetMemoryProtectionFunction( (uintptr_t*)&( *Routing )->MemoryProtectFn ) ) )
+        if( ERROR_SUCCESS != ( retVal = INTERNAL_SetMemoryProtectionFunction( (uintptr_t*) &( *Routing )->MemoryProtectFn ) ) )
         {
             BWSR_DEBUG( LOG_ERROR, "INTERNAL_SetMemoryProtectionFunction() Failed\n" );
+            BwsrFree( *Routing );
         }
         else {
             ( *Routing )->InterceptEntry     = Entry;
@@ -1244,9 +1254,19 @@ BWSR_STATUS
                 BWSR_DEBUG( LOG_ERROR, "INTERNAL_BackupOriginalCode() Failed\n" );
             }
             else {
-                retVal = INTERNAL_ApplyTrampolineCodePatch( Routing );
+                if( ERROR_SUCCESS != ( retVal = INTERNAL_ApplyTrampolineCodePatch( Routing ) ) )
+                {
+                    BWSR_DEBUG( LOG_ERROR, "INTERNAL_ApplyTrampolineCodePatch() Failed\n" );
+                    BwsrFree( Routing->InterceptEntry->OriginalCode );
+                }
             } // INTERNAL_BackupOriginalCode()
         } // INTERNAL_GenerateRelocatedCode()
+
+        if( ERROR_SUCCESS != retVal )
+        {
+            BwsrFree( (void*) Routing->Trampoline->Buffer.Start );
+            BwsrFree( Routing->Trampoline );
+        }
     } // INTERNAL_GenerateTrampoline()
 
     return retVal;
@@ -1286,6 +1306,25 @@ BWSR_STATUS
     } // BwsrMalloc( InterceptorTracker )
 
     return retVal;
+}
+
+static
+void
+    INTERNAL_MemoryAllocator_CheckInterceptorRelease
+    (
+        void
+    )
+{
+    if( gInterceptorTracker.Next == &gInterceptorTracker )
+    {
+        if( NULL != gMemoryAllocator.Allocators )
+        {
+            BwsrFree( gMemoryAllocator.Allocators );
+
+            gMemoryAllocator.Allocators     = NULL;
+            gMemoryAllocator.AllocatorCount = 0;
+        } // Allocators
+    } // gInterceptorTracker
 }
 
 static
@@ -1331,6 +1370,8 @@ void
     Tracker->Previous           = NULL;
 
     BwsrFree( Tracker );
+
+    INTERNAL_MemoryAllocator_CheckInterceptorRelease();
 }
 
 static
@@ -1355,8 +1396,6 @@ BWSR_STATUS
 
     return retVal;
 }
-
-#include "SymbolResolve/Darwin/Macho.h"
 
 static
 BWSR_STATUS
@@ -1429,6 +1468,7 @@ BWSR_STATUS
             if( ERROR_SUCCESS != ( retVal = INTERNAL_BuildRoutingAndActivateHook( routing ) ) )
             {
                 BWSR_DEBUG( LOG_ERROR, "INTERNAL_BuildRoutingAndActivateHook() Failed\n" );
+                BwsrFree( routing );
             }
             else {
                 entry->Routing = routing;
@@ -1447,6 +1487,14 @@ BWSR_STATUS
                 retVal = ERROR_SUCCESS;
             } // INTERNAL_BuildRoutingAndActivateHook()
         } // INTERNAL_InterceptRouting_Initialize()
+
+        if( ERROR_SUCCESS != retVal )
+        {
+            if( gInterceptorTracker.Previous != &gInterceptorTracker )
+            {
+                INTERNAL_InterceptorTracker_Release( gInterceptorTracker.Previous );
+            } // gInterceptorTracker
+        } // deinit
     } // INTERNAL_InterceptorEntry_Initialize()
 
     __DEBUG_RETVAL( retVal );
@@ -1486,16 +1534,7 @@ BWSR_STATUS
         tracker = tracker->Next;
     } // while()
 
-    if( gInterceptorTracker.Next == &gInterceptorTracker )
-    {
-        if( NULL != gMemoryAllocator.Allocators )
-        {
-            BwsrFree( gMemoryAllocator.Allocators );
-
-            gMemoryAllocator.Allocators     = NULL;
-            gMemoryAllocator.AllocatorCount = 0;
-        }
-    }
+    INTERNAL_MemoryAllocator_CheckInterceptorRelease();
 
     return retVal;
 }
