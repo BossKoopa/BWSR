@@ -216,9 +216,12 @@ int main()
     // Clean up all hooks
     BWSR_DestroyAllHooks();
 
+#if defined( DEBUG_MODE )
+
     size_t leaks = MemoryTracker_CheckForMemoryLeaks();
     BWSR_DEBUG( LOG_CRITICAL,
                 "%zu memory leaks found!\n",
                 leaks );
-    __UNUSED(leaks)
+
+#endif
 }
