@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #ifdef __APPLE__
     #include <mach/mach.h>
@@ -15,6 +16,7 @@
 #else
     #include <sys/mman.h>
     #include <unistd.h>
+    #include "SymbolResolve/Linux/Elf.h"
 #endif
 
 #include "utility/debug.h"
@@ -191,6 +193,19 @@ void
 
     AudioUnitProcess( inUnit, ioActionFlags, inTimeStamp, inNumberFrames, ioData );
 }
+#else
+void
+    EXAMPLE_linux_SymbolResolve
+    (
+        void
+    )
+{
+    uintptr_t open_address = 0;
+    BWSR_ResolveSymbol( "open", NULL, &open_address );
+
+    BWSR_DEBUG( LOG_CRITICAL, "open address: %p\n", open );
+    BWSR_DEBUG( LOG_CRITICAL, "resolved address: 0x%lx\n", open_address );
+}
 #endif
 
 
@@ -208,6 +223,10 @@ int main()
 #if defined( __APPLE__ )
 
     EXAMPLE_hooking_AudioUnitProcess();
+
+#else
+
+    EXAMPLE_linux_SymbolResolve();
 
 #endif
 

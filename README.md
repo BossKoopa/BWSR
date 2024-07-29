@@ -32,22 +32,29 @@ make examples
 ```
 
 ## Symbol Resolver (Locating the Address of a Function)
-> [!NOTE]
-> Currently only iOS is supported for the symbol resolver.
 
 ### Symbol Resolution When the Image IS Known
 This will return the address of the first occurence encountered of only the mach header matching the specific image name and the specific function name.
 ```c
 uintptr_t function_address = 0;
 
+// iOS
 retVal = BWSR_ResolveSymbol( "AudioUnitProcess", "AudioToolbox", &function_address );
+
+// Android
+retVal = BWSR_ResolveSymbol( "open", "/apex/com.android.runtime/lib64/bionic/libc.so", &function_address );
 ```
 
 ### Symbol Resolution When the Image Is **NOT** Known
 This will return the address of the first occurence encounted in any mach header for the matching function name. This is usually fine but if the function name is common enough you may get the address of the wrong function.
 ```c
 uintptr_t function_address = 0;
+
+// iOS/Mac
 retVal = BWSR_ResolveSymbol( "AudioUnitProcess", NULL, &function_address );
+
+// Android/Linux
+retVal = BWSR_ResolveSymbol( "open", NULL, &function_address );
 ```
 
 ## Inline Hooking

@@ -17,6 +17,7 @@
 #define ERROR_NOT_FOUND                     ( 0x00000012 )
 #define ERROR_UNHANDLED_DATA_TYPE           ( 0x00000013 )
 #define ERROR_UNIMPLEMENTED                 ( 0x00000014 )
+#define ERROR_UNEXPECTED_FORMAT             ( 0x00000015 )
 
 // -----------------------------------------------------------------------------
 //  MEMORY ERRORS
@@ -34,6 +35,7 @@
 #define ERROR_FILE_IO                       ( 0x00001000 )
 #define ERROR_CACHED_LOCATION               ( 0x00001001 )
 #define ERROR_SHARED_CACHE                  ( 0x00001002 )
+#define ERROR_PROC_SELF_MAPS                ( 0x00001003 )
 
 // -----------------------------------------------------------------------------
 //  OS ERRORS
@@ -56,6 +58,7 @@
     E( ERROR_NOT_FOUND,                 "Element not found"                     )   \
     E( ERROR_UNHANDLED_DATA_TYPE,       "Unexpected data type"                  )   \
     E( ERROR_UNIMPLEMENTED,             "No implementation for this data type"  )   \
+    E( ERROR_UNEXPECTED_FORMAT,         "Data format did match expectation"     )   \
     /* --- MEMORY --- */                                                            \
     E( ERROR_MEM_ALLOC,                 "Out of memory"                         )   \
     E( ERROR_MEMORY_MAPPING,            "Faied to map memory region"            )   \
@@ -65,8 +68,9 @@
     E( ERROR_FILE_IO,                   "File I/O"                              )   \
     E( ERROR_CACHED_LOCATION,           "Invalid cache location"                )   \
     E( ERROR_SHARED_CACHE,              "Failed to initialize shared cache"     )   \
+    E( ERROR_PROC_SELF_MAPS,            "Failed to open proc/self/maps"         )   \
     /* --- OS --- */                                                                \
-    E( ERROR_SYMBOL_SIZE,               "Invliad symbol size"                   )   \
+    E( ERROR_SYMBOL_SIZE,               "Invalid symbol size"                   )   \
     E( ERROR_TASK_INFO,                 "Need to summarize"                     )   \
     E( ERROR_ROUTING_FAILURE,           "Failed to setup VirtualPage routing"   )
 

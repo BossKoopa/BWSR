@@ -19,7 +19,8 @@ ANDROID_PLATFORMS   := android
 
 ANDROID_DIRS :=                     \
     Memory                          \
-    Hook
+    Hook                            \
+    SymbolResolve/Linux
 
 EXAMPLE_LDFLAGS_android :=          \
     -pie                            \

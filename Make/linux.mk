@@ -11,7 +11,8 @@ LINUX_PLATFORMS := linux
 
 LINUX_DIRS :=               \
 	Memory                  \
-	Hook
+	Hook					\
+	SymbolResolve/Linux
 
 LINUX_GCCFLAGS :=           \
 	-Os                     \
