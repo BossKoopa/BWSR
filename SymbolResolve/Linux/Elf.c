@@ -407,7 +407,6 @@ BWSR_STATUS
     return retVal;
 }
 
-// iterate_symbol_table_impl
 static
 BWSR_STATUS
     INTERNAL_GetValueFromSymbolTable

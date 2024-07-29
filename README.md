@@ -134,7 +134,6 @@ if( leaks > 0 )
 
 ## TODO
 The list of items that needs to be done is far longer than this list, but these are these are the next important goals:
-- Add Symbol Resolver support for ELF files.
 - Dynamic entitlements for iOS.
 
 ## ACKNOWLEDGMENTS
